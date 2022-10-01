@@ -1,0 +1,29 @@
+{
+  "name": "@tomek7667/tmk-biotech",
+  "version": "1.0.0",
+  "description": "Used for reading fasta and fastq files and structuring as valid javascript objects. The package provides also some useful utility functions like complementarify used for getting complementary sequence, or sanitizeGenome for sanitizing user input.",
+  "main": "tmk-biotech.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomek7667/tmk-biotech.git"
+  },
+  "keywords": [
+    "aabiot",
+    "biotechnology",
+    "fasta",
+    "fastq",
+    "read fasta",
+	"read fastq",
+	"complementary",
+	"javascript genome"
+  ],
+  "author": "Tomasz Dąbrowski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomek7667/tmk-biotech/issues"
+  },
+  "homepage": "https://github.com/tomek7667/tmk-biotech#readme"
+}
