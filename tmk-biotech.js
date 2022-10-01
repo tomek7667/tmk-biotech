@@ -120,9 +120,9 @@ let complementarify = (sequence) => {
  */
 let sanitizeGenome = (sequence) => {
 	return sequence
-		.replaceAll("\n", "")
-		.replaceAll("\r", "")
-		.replaceAll(" ", "")
+		.replace(/\n/g, "")
+		.replace(/\r/g, "")
+		.trim()
 		.toUpperCase();
 };
 
