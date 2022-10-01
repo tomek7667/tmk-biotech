@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-'use strict';
+("use strict");
 
 /**
  * Function to load the reads (genomes) from a fasta/fastq file into valid objects
@@ -106,10 +106,10 @@ let complementarify = (sequence) => {
 		.split("")
 		.reverse()
 		.join("")
-		.replaceAll("T", "a")
-		.replaceAll("C", "g")
-		.replaceAll("A", "t")
-		.replaceAll("G", "c")
+		.replace(/T/g, "a")
+		.replace(/C/g, "g")
+		.replace(/A/g, "t")
+		.replace(/G/g, "c")
 		.toUpperCase();
 };
 
