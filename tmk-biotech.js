@@ -1,29 +1,31 @@
+("use strict");
+
 const fs = require("fs");
 const path = require("path");
-
-("use strict");
+const gunzip = require("gunzip-file");
+const { randomUUID } = require("crypto");
 
 /**
  * Function to load the reads (genomes) from a fasta/fastq file into valid objects
  *
- * @param {*} path - Path to the file to be read. Extenstions: .fasta, .fastq, .fa
- * @param {Function | undefined} errorCallback function to be called after unknown extenstion
+ * @param {String} p - Path to the file to be read. Extensions: .fasta, .fastq, .fa
+ * @param {Function | undefined} errorCallback function to be called after unknown extension
  * @returns {Object} - Data object with the following properties:
  * - readsNames: Array of strings
  * - reads: Array of strings
  * - readsQualities: Array of arrays of numbers (qualities corresponding to the reads)
  * - type: "fasta" or "fastq"
  */
-let loadFastFile = (path, errorCallback) => {
-	let extension = path.split(".")[path.split(".").length - 1].toLowerCase();
+let loadFastFile = (p, errorCallback) => {
+	let ext = path.extname(p).slice(1).toLowerCase();
 	let dataObject;
-	switch (extension) {
+	switch (ext) {
 		case "fa":
 		case "fasta":
-			dataObject = loadFasta(path);
+			dataObject = loadFasta(p);
 			break;
 		case "fastq":
-			dataObject = loadFastq(path);
+			dataObject = loadFastq(p);
 			break;
 		default:
 			if (errorCallback !== undefined) {
@@ -34,14 +36,71 @@ let loadFastFile = (path, errorCallback) => {
 	return dataObject;
 };
 
-let loadFasta = (path) => {
+/**
+ *
+ * @param {Sting} p - Path to the file to be read. Extensions: .fasta, .fastq, .fa
+ * @param {String} appName - Name of the app to be used in the path for temporary zip files
+ * @param {Function | undefined} errorCallback - function to be called after unknown extension
+ * @returns {Promise<Object>} - Data object with the following properties:
+ * - readsNames: Array of strings
+ * - reads: Array of strings
+ * - readsQualities: Array of arrays of numbers (qualities corresponding to the reads)
+ * - type: "fasta" or "fastq"
+ * - wasArchived: boolean
+ */
+let loadFastArchive = async (p, appName, errorCallback) => {
+	let ext = path.extname(p).slice(1).toLowerCase();
+	let dataObject;
+	switch (ext) {
+		case "gz":
+			dataObject = await loadFastGz(p, appName, errorCallback);
+			break;
+		default:
+			if (errorCallback !== undefined) {
+				errorCallback();
+			}
+			return;
+	}
+	return { ...dataObject, wasArchived: true };
+};
+
+let loadFastGz = (p, appName, errorCallback) => {
+	return new Promise((resolve, reject) => {
+		let dataObject;
+		if (
+			p.split(".")[p.split(".").length - 2].toLowerCase() === "fastq" ||
+			p.split(".")[p.split(".").length - 2].toLowerCase() === "fasta" ||
+			p.split(".")[p.split(".").length - 2].toLowerCase() === "fa"
+		) {
+			makeSureDirectory(path.join(getAppDataPath(appName), "tempGz/"));
+			const tempFile = path.join(
+				getAppDataPath(appName),
+				"tempGz/",
+				randomUUID() +
+					p.split("/")[p.split("/").length - 1].split(".gz")[0]
+			);
+			gunzip(p, tempFile, () => {
+				dataObject = loadFastFile(tempFile, appName, errorCallback);
+				fs.unlinkSync(tempFile);
+				return resolve(dataObject);
+			});
+		} else {
+			if (errorCallback !== undefined) {
+				errorCallback();
+			}
+			return reject();
+		}
+	});
+};
+
+let loadFasta = (p) => {
 	let dataObj = {
 		readsNames: [],
 		reads: [],
 		readsQualities: [],
 		type: "fasta",
 	};
-	let fastaContent = fs.readFileSync(path).toString().split("\n");
+	let fastaContent = fs.readFileSync(p).toString().split("\n");
 	let i = 0;
 	while (i < fastaContent.length) {
 		if (
@@ -71,14 +130,14 @@ let loadFasta = (path) => {
 	return dataObj;
 };
 
-let loadFastq = (path) => {
+let loadFastq = (p) => {
 	let dataObj = {
 		readsNames: [],
 		reads: [],
 		readsQualities: [],
 		type: "fastq",
 	};
-	let fastqContent = fs.readFileSync(path).toString().split("\n");
+	let fastqContent = fs.readFileSync(p).toString().split("\n");
 	let i = 0;
 	while (i < fastqContent.length) {
 		if (fastqContent[i].length === 0) break;
@@ -99,7 +158,7 @@ let loadFastq = (path) => {
 
 /**
  * @param {String} sequence - sequence to be complementarified
- * @returns a complementarified version of the sequence
+ * @returns {String} a complementarified version of the sequence
  */
 let complementarify = (sequence) => {
 	return sequence
@@ -116,19 +175,16 @@ let complementarify = (sequence) => {
 /**
  *
  * @param {String} sequence - sequence to be sanititzed from any whitespaces and lowercase letters
- * @returns a sanitized version of the sequence
+ * @returns {String} a sanitized version of the sequence
  */
 let sanitizeGenome = (sequence) => {
-	return sequence
-		.replace(/\n/g, "")
-		.replace(/\r/g, "")
-		.trim()
-		.toUpperCase();
+	return sequence.replace(/\n/g, "").replace(/\r/g, "").trim().toUpperCase();
 };
 
 /**
  *
  * @param {String} dir - A path to a directory to be created
+ * @returns {String} the path to the directory
  */
 let makeSureDirectory = (dir) => {
 	if (!fs.existsSync(dir)) {
@@ -136,6 +192,7 @@ let makeSureDirectory = (dir) => {
 			recursive: true,
 		});
 	}
+	return dir;
 };
 
 /**
@@ -169,6 +226,7 @@ let getAppDataPath = (appName) => {
 // Exporting
 module.exports = {
 	loadFastFile,
+	loadFastArchive,
 	complementarify,
 	sanitizeGenome,
 	makeSureDirectory,

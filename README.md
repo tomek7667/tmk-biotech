@@ -8,6 +8,7 @@ Example usage:
 ```javascript
 const {
 	loadFastFile,
+	loadFastArchive,
 	complementarify,
 	sanitizeGenome,
 	makeSureDirectory,
@@ -17,6 +18,16 @@ const {
 // Loading genomes from a file (with their qualities), a custom error callback can be specified in case of invalid format of a file.
 const dataObject = loadFastFile("path/to/file.fastq", () => { console.log("Custom error when invalid format"); }) // Or .fa or .fasta
 // OUT: 
+// {
+// 	"readsNames": ["Read 1", "Read 2"],
+// 	"reads": ["GAATA", "TGTGG"],
+// 	"readsQualities": [[0, 0, 0, 0, 0], [1, 2, 5, 2, 0]],
+// 	"type": "fastq"
+// }
+
+// Loading genomes from a '.gz' archive (with one file currently tested). A custom error callback can be specified in case of invalid format of a file.
+const dataObject = await loadFastArchive("path/to/file.fastq.gz", () => { console.log("Custom error when invalid format"); }) // Or .fa.gz or .fasta.gz
+// OUT:
 // {
 // 	"readsNames": ["Read 1", "Read 2"],
 // 	"reads": ["GAATA", "TGTGG"],
