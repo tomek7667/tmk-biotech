@@ -26,7 +26,7 @@ const dataObject = loadFastFile("path/to/file.fastq", () => { console.log("Custo
 // }
 
 // Loading genomes from a '.gz' archive (with one file currently tested). A custom error callback can be specified in case of invalid format of a file.
-const dataObject = await loadFastArchive("path/to/file.fastq.gz", () => { console.log("Custom error when invalid format"); }) // Or .fa.gz or .fasta.gz
+const dataObject = await loadFastArchive("path/to/file.fastq.gz", "Test app", () => { console.log("Custom error when invalid format"); }) // Or .fa.gz or .fasta.gz
 // OUT:
 // {
 // 	"readsNames": ["Read 1", "Read 2"],

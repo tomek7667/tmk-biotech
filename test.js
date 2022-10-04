@@ -19,7 +19,9 @@ const main = async () => {
 
 	// console.log(testFastqGz);
 
-	const testFasta = loadFastFile("example_data/example.fasta", appName);
+	const testFasta = loadFastFile("example_data/example.fasta", () => {
+		console.log("An error occured while loading the genome!");
+	});
 
 	// console.log(testFasta);
 };
