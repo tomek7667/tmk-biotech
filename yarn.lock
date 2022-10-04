@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-gunzip-file@^0.1.1:
+gunzip-file@0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/gunzip-file/-/gunzip-file-0.1.1.tgz#29b3a3cc8a6a58ce553812bc0b13f0a0bb3a5ee2"
   integrity sha512-DjDExBKHuhyhHOs8HeGV5dw6wY6eYTl4pAHz27oy8XppgBK60vmG/G3bY09zyT9PXX4TjmnEF4hYoRn61Fctlg==
