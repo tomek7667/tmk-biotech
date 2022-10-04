@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/tomek7667/tmk-biotech/issues"
   },
-  "homepage": "https://github.com/tomek7667/tmk-biotech#readme"
+  "homepage": "https://github.com/tomek7667/tmk-biotech#readme",
+  "dependencies": {
+    "gunzip-file": "^0.1.1"
+  }
 }
