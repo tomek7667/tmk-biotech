@@ -5,6 +5,15 @@ const path = require("path");
 const gunzip = require("gunzip-file");
 const { randomUUID } = require("crypto");
 
+const supportedFileTypes = [
+	"fasta",
+	"fastq",
+	"fa",
+	"fastq.gz",
+	"fasta.gz",
+	"fa.gz",
+];
+
 /**
  * Function to load the reads (genomes) from a fasta/fastq file into valid objects
  *
@@ -178,7 +187,12 @@ let complementarify = (sequence) => {
  * @returns {String} a sanitized version of the sequence
  */
 let sanitizeGenome = (sequence) => {
-	return sequence.replace(/\n/g, "").replace(/\r/g, "").trim().toUpperCase();
+	return sequence
+		.replace(/\n/g, "")
+		.replace(/\r/g, "")
+		.replace(/ /g, "")
+		.trim()
+		.toUpperCase();
 };
 
 /**
@@ -231,4 +245,5 @@ module.exports = {
 	sanitizeGenome,
 	makeSureDirectory,
 	getAppDataPath,
+	supportedFileTypes,
 };
