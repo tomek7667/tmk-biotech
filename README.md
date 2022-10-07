@@ -53,4 +53,10 @@ const pathToFileStoring = getAppDataPath("Test app")
 // Getting supported file extensions
 console.log(supportedFileTypes)
 // OUT: ["fa", "fasta", "fastq", "fastq.gz", fasta.gz", "fa.gz"]
+
+// Generate all GATC sequences 
+const gatcSequences = iupacTOgatc("TTTRT");
+
+console.log(gatcSequences);
+// OUT: [ 'TTTAT', 'TTTGT' ]
 ```

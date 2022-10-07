@@ -237,6 +237,48 @@ let getAppDataPath = (appName) => {
 	}
 };
 
+/**
+ *
+ * @param {String} iupacSequence - A sequence with IUPAC codes
+ * @returns {Array<String>} - An array of all possible sequences that can be generated from the IUPAC sequence
+ */
+let iupacTOgatc = (iupacSequence) => {
+	const translations = {
+		A: ["A"],
+		C: ["C"],
+		G: ["G"],
+		T: ["T"],
+		R: ["A", "G"],
+		Y: ["C", "T"],
+		S: ["G", "C"],
+		W: ["A", "T"],
+		K: ["G", "T"],
+		M: ["A", "C"],
+		B: ["C", "G", "T"],
+		D: ["A", "G", "T"],
+		H: ["A", "C", "T"],
+		V: ["A", "C", "G"],
+		N: ["A", "C", "G", "T"],
+	};
+	// Generate all possible sequences
+	let sequences = [];
+	for (let i = 0; i < iupacSequence.length; i++) {
+		let newSequences = [];
+		for (let j = 0; j < translations[iupacSequence[i]].length; j++) {
+			if (sequences.length === 0) {
+				newSequences.push(translations[iupacSequence[i]][j]);
+			}
+			for (let k = 0; k < sequences.length; k++) {
+				newSequences.push(
+					sequences[k] + translations[iupacSequence[i]][j]
+				);
+			}
+		}
+		sequences = newSequences;
+	}
+	return sequences;
+};
+
 // Exporting
 module.exports = {
 	loadFastFile,
@@ -245,5 +287,6 @@ module.exports = {
 	sanitizeGenome,
 	makeSureDirectory,
 	getAppDataPath,
+	iupacTOgatc,
 	supportedFileTypes,
 };

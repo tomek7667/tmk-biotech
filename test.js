@@ -1,6 +1,7 @@
 const {
 	loadFastFile,
 	loadFastArchive,
+	iupacTOgatc,
 	complementarify,
 	sanitizeGenome,
 	makeSureDirectory,
@@ -24,6 +25,10 @@ const main = async () => {
 	});
 
 	// console.log(testFasta);
+
+	const gatcSequences = iupacTOgatc("RTTTT");
+
+	// console.log(gatcSequences);
 };
 
 main();
