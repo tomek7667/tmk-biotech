@@ -116,7 +116,7 @@ let loadFastGz = (p, appName, errorCallback) => {
 			});
 		} else {
 			if (errorCallback !== undefined) {
-				errorCallback();
+				errorCallback("Unsupported file type");
 			}
 			return reject();
 		}
