@@ -18,7 +18,7 @@ const supportedFileTypes = [
  * Function to load the reads (genomes) from a fasta/fastq file into valid objects
  *
  * @param {String} p - Path to the file to be read. Extensions: .fasta, .fastq, .fa
- * @param {Function | undefined} errorCallback function to be called after unknown extension
+ * @param {Function<String> | undefined} errorCallback function to be called after an error, an argument with the error message is passed
  * @returns {Object} - Data object with the following properties:
  * - readsNames: Array of strings
  * - reads: Array of strings
@@ -31,14 +31,28 @@ let loadFastFile = (p, errorCallback) => {
 	switch (ext) {
 		case "fa":
 		case "fasta":
-			dataObject = loadFasta(p);
+			try {
+				dataObject = loadFasta(p);
+			} catch (e) {
+				if (errorCallback !== undefined) {
+					errorCallback(e.message);
+				}
+				return;
+			}
 			break;
 		case "fastq":
-			dataObject = loadFastq(p);
+			try {
+				dataObject = loadFastq(p);
+			} catch (e) {
+				if (errorCallback !== undefined) {
+					errorCallback(e.message);
+				}
+				return;
+			}
 			break;
 		default:
 			if (errorCallback !== undefined) {
-				errorCallback();
+				errorCallback("Unsupported file type");
 			}
 			return;
 	}
@@ -49,7 +63,7 @@ let loadFastFile = (p, errorCallback) => {
  *
  * @param {Sting} p - Path to the file to be read. Extensions: .fasta, .fastq, .fa
  * @param {String} appName - Name of the app to be used in the path for temporary zip files
- * @param {Function | undefined} errorCallback - function to be called after unknown extension
+ * @param {Function<String> | undefined} errorCallback function to be called after an error, an argument with the error message is passed
  * @returns {Promise<Object>} - Data object with the following properties:
  * - readsNames: Array of strings
  * - reads: Array of strings
@@ -62,11 +76,18 @@ let loadFastArchive = async (p, appName, errorCallback) => {
 	let dataObject;
 	switch (ext) {
 		case "gz":
-			dataObject = await loadFastGz(p, appName, errorCallback);
+			try {
+				dataObject = await loadFastGz(p, appName, errorCallback);
+			} catch (e) {
+				if (errorCallback !== undefined) {
+					errorCallback(e.message);
+				}
+				return;
+			}
 			break;
 		default:
 			if (errorCallback !== undefined) {
-				errorCallback();
+				errorCallback("Unsupported file type");
 			}
 			return;
 	}
